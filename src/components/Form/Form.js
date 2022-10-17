@@ -1,42 +1,59 @@
 import { useState } from 'react';
-import { useAddContactMutation } from 'redux/phoneBookAPI';
+import { useAddContactMutation, useGetContactsQuery } from 'redux/phoneBookAPI';
 import s from './Form.module.css';
 
-function Form() {
-  const [addContact] = useAddContactMutation();
+export default function ContactForm() {
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
+    const { data: contacts } = useGetContactsQuery();
+    const [addContact] = useAddContactMutation();
 
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
 
-  const onSubmit = e => {
-    e.preventDefault();
-    alert(`${name} is already in contacts`);
-    addContact({ name, number });
-    formReset();
-  };
+    const createContact = async user => {
+        await addContact(user);
+    };
 
-  const onChange = e => {
-    switch (e.currentTarget.name) {
-      case 'name':
-        setName(e.currentTarget.value);
-        break;
 
-      case 'number':
-        setNumber(e.currentTarget.value);
-        break;
+    const cheakAddContact = name => {
+        const isValidate = contacts.find(item => item.name === name);
+        isValidate && alert(`${name} is already in contacts`);
+        return isValidate;
+    };
 
-      default:
-        return;
+    const handleSubmut = e => {
+        e.preventDefault();
+        const isValidate = cheakAddContact(name);
+        resetForm();
+        if (isValidate) return;
+        createContact({ name, number });
+        resetForm();
+    };
+
+    const handleInputChange = evt => {
+        const { name } = evt.currentTarget;
+        const { value } = evt.currentTarget;
+
+        switch (name) {
+            case "name":
+                setName(value);
+                break;
+            
+            case "number":
+                setNumber(value);
+                break;
+            
+            default:
+                return;
+        }
     }
-  };
 
-  const formReset = () => {
-    setName('');
-    setNumber('');
-  };
+    const resetForm = () => {
+        setName('');
+        setNumber('');
+    }
 
   return (
-    <form className={s.form} onSubmit={onSubmit}>
+    <form className={s.form} onSubmit={handleSubmut}>
       <label className={s.label}>
         Name
         <input
@@ -48,7 +65,7 @@ function Form() {
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
-          onChange={onChange}
+          onChange={handleInputChange}
         />
       </label>
       <label className={s.label}>
@@ -57,7 +74,7 @@ function Form() {
           autoComplete="off"
           className={s.input}
           value={number}
-          onChange={onChange}
+          onChange={handleInputChange}
           type="tel"
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
@@ -72,4 +89,4 @@ function Form() {
   );
 }
 
-export default Form;
+
