@@ -1,0 +1,30 @@
+.list {
+  width: 30vw;
+  margin: 0 auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #2c2020bc;
+  margin-bottom: 5px;
+}
+
+.deleteBtn {
+  padding: 5px 10px;
+  background-color: #2c2020bc;
+  border-radius: 10px;
+  color: aliceblue;
+  cursor: pointer;
+  transition: background-color 300ms;
+}
+
+.deleteBtn:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.loading {
+  width: 100px;
+  margin: 0 auto;
+}
